@@ -1,0 +1,75 @@
+/* Reset some browser default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+form {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+form label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+form input[type="text"],
+form input[type="date"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+button {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
