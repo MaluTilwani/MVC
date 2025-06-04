@@ -24,99 +24,106 @@ $users = $userModel->getAllUsers();
 <html>
 <head>
     <title>Add Task</title>
-   <style>
-    body {
-        background-color: #f9f6f4;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        display: flex;
-        justify-content: center;
-        padding: 50px 0;
-    }
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f6f4;
+            padding: 40px;
+            margin: 0;
+        }
 
-    form {
-        max-width: 400px;
-        width: 100%;
-        margin: 40px auto;
-        background: #ffffff;
-        padding: 30px 50px;
-        border-radius: 10px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e0cfc8;
-        margin-top: 7%;
-    }
+        .form-container {
+            width: 80%;
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0cfc8;
+        }
 
         h2 {
             text-align: center;
-            margin-bottom: 20px;
-            color: #8d6e63;
+            margin-bottom: 25px;
+            font-size: 26px;
+            color: #6d4c41;
         }
 
-    input, textarea, select {
-        width: 100%;
-        padding: 12px 15px;
-        margin-top: 10px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        border: 1px solid #d7ccc8;
-        background-color: #fefefe;
-        font-size: 1rem;
-    }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4e342e;
+        }
 
-    input[type="submit"], button {
-        width: 100%;
-        background-color: #a1887f;
-        color: #ffffff;
-        padding: 14px 0;
-        border: none;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #d7ccc8;
+            background-color: #fcfcfc;
+        }
 
-    input[type="submit"]:hover, button:hover {
-        background-color: #8d6e63;
-    }
+        textarea {
+            resize: vertical;
+        }
 
-    .message {
-        margin-bottom: 15px;
-        font-weight: 600;
-        color: #388e3c;
-        text-align: center;
-    }
+        input[type="submit"] {
+            background-color: #8d6e63;
+            color: #fff;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
 
-    .error {
-        color: #d32f2f;
-        text-align: center;
-    }
-</style>
+        input[type="submit"]:hover {
+            background-color: #6d4c41;
+        }
 
+        @media (max-width: 768px) {
+            .form-container {
+                width: 95%;
+                padding: 25px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<h2>Add Task</h2>
+<div class="form-container">
+    <h2>Add New Task</h2>
+    <form method="POST">
+        <label for="title">Task Title:</label>
+        <input type="text" name="title" id="title" required>
 
-<form method="POST">
-    <label>Title:</label>
-    <input type="text" name="title" required>
+        <label for="description">Task Description:</label>
+        <textarea name="description" id="description" rows="3" required></textarea>
 
-    <label>Description:</label>
-    <textarea name="description" rows="4" required></textarea>
+        <label for="assigned_to">Assign To:</label>
+        <select name="assigned_to" id="assigned_to" required>
+            <option value="">-- Select User --</option>
+            <?php foreach ($users as $user): ?>
+                <?php if (!isset($user['role']) || $user['role'] !== 'admin'): ?>
+                    <option value="<?= htmlspecialchars($user['id']) ?>">
+                        <?= htmlspecialchars($user['name']) ?>
+                    </option>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </select>
 
-   <label>Assign To:</label>
-<select name="assigned_to" required>
-    <option value="">Select User</option>
-    <?php foreach ($users as $user): ?>
-        <?php if ($user['role'] !== 'admin'): ?>
-            <option value="<?= htmlspecialchars($user['id']) ?>">
-                <?= htmlspecialchars($user['name']) ?> (<?= htmlspecialchars($user['role']) ?>)
-            </option>
-        <?php endif; ?>
-    <?php endforeach; ?>
-</select>
-    <input type="submit" value="Add Task">
-</form>
+        <input type="submit" value="Add Task">
+    </form>
+</div>
 
 </body>
 </html>

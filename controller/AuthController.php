@@ -9,56 +9,40 @@ class AuthController {
             $name = $_POST['name'];
             $email = $_POST['email'];
             $password = $_POST['password'];
-            $role = $_POST['role'];
 
-            if ($user->register($name, $email, $password, $role)) {
-                header("Location: login.php");
+
+            if ($user->register($name, $email, $password)) {
+            echo "<script>
+            alert('Registration Successful!');
+            window.location.href = 'login.php';
+            </script>";
+            exit;
             } else {
-                echo "Registration Failed!";
+            echo "<script>alert('Registration Failed!');</script>";
             }
+
         }
     }
 
- public function login() {
+public function login() {
     $user = new User();
 
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
 
-        
-
         $result = $user->login($email, $password);
 
         if (is_array($result)) {
             $_SESSION['user'] = $result;
-
-           switch (strtolower($result['role'])) {
-                case 'admin':
-                    header("Location: ../view/admin-dash.php");
-                    break;
-                case 'teamleader':
-                    header("Location: ../view/team-dash.php");
-                    break;
-                case 'employee':
-                    header("Location: ../view/emp-dash.php");
-                    break;
-                default:
-                    echo "Unknown role!";
-                    break;
-            }
+            echo "<script>alert('loggedin successfully');</script>";
+            header("Location: admin-dash.php");
             exit();
-        } elseif ($result === "email_not_found") {
-            echo "Email not registered. Please <a href='register.php'>register</a> first.";
-            
-        } elseif ($result === "invalid_password") {
-            echo "Incorrect password. Please try again.";
         } else {
-            echo "Login failed due to an unknown error.";
+            echo "<script>alert('Email and password not matched..');</script>";
         }
     }
 }
-
   public function logout() {
     session_start();
     $_SESSION = [];              

@@ -1,23 +1,17 @@
 <?php
-require_once '../config/config.php'; 
+require_once '../config/config.php';
 
 $db = new Database();
 $conn = $db->connect();
 
-// $sql = "SELECT t.*, u.name AS assigned_user
-//         FROM tasks t
-//         JOIN users u ON t.assigned_to = u.id
-//         ORDER BY t.id DESC";
-
-$sql = "SELECT t.id, t.title, t.description, u.name AS assigned_user, u.role AS assigned_role
-FROM tasks t
-LEFT JOIN users u ON t.assigned_to = u.id
-ORDER BY t.id ASC";
-
+$sql = "SELECT t.id, t.title, t.description, u.name AS assigned_user
+        FROM tasks t
+        LEFT JOIN users u ON t.assigned_to = u.id
+        ORDER BY t.id ASC";
 
 $result = $conn->query($sql);
-
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,80 +19,105 @@ $result = $conn->query($sql);
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f9f6f4;
             padding: 40px;
+            color: #3e2723;
         }
-        .table-container {
-            max-width: 1000px;
-            margin: auto;
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
+
         h2 {
             text-align: center;
-            color: #5d4037;
-            margin-bottom: 20px;
+            color: #6d4c41;
         }
+
+        .table-container {
+            max-width: 100%;
+            overflow-x: auto;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0cfc8;
+        }
+
         table {
+            min-width: 950px;
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            font-size: 15px;
         }
+
         th, td {
             text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0cfc8;
+            white-space: nowrap;
         }
+
         th {
-            background-color: #a1887f;
+            background-color: #8d6e63;
             color: white;
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
+
         tr:hover {
-            background-color: #f5f5f5;
+            background-color: #f1ebe8;
         }
+
         a {
-            color: #6d4c41;
             text-decoration: none;
+            color: #6d4c41;
             font-weight: bold;
         }
+
         a:hover {
             text-decoration: underline;
             color: #5a382e;
         }
+
+        .action-buttons a {
+            margin-right: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
+
+<div class="table-container">
     <h2>Manage Tasks</h2>
-    <table border="1" cellpadding="10" cellspacing="0">
-  <tr>
-    <th>Task Title</th>
-    <th>Task Description</th>
-    <th>Assigned To</th>
-    <th>Role</th>
-    <th>Action</th>
-  </tr>
-  <?php if ($result && $result->num_rows > 0): ?>
-    <?php while ($row = $result->fetch_assoc()): ?>
-      <tr>
-        <td><?php echo htmlspecialchars($row['title']); ?></td>
-        <td><?php echo htmlspecialchars($row['description']); ?></td>
-        <td><?php echo htmlspecialchars($row['assigned_user'] ?? 'Unassigned'); ?></td>
-        <td><?php echo htmlspecialchars($row['assigned_role'] ?? 'N/A'); ?></td>
-          <td class="action-buttons">
-       <a href="task_edit.php?id=<?= $row['id'] ?>">Edit</a> |
-      <a href="delete_task.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this user?')">Delete</a>
-    
-
-    </td>
-      </tr>
-     <?php endwhile; ?>
-  <?php else: ?>
-    <tr><td colspan="2" style="text-align:center;">No tasks found.</td></tr>
-  <?php endif; ?>
-</table>
-
-
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Task Title</th>
+            <th>Task Description</th>
+            <th>Assigned To</th>
+            <th>Actions</th>
+        </tr>
+        <?php if ($result && $result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['id']) ?></td>
+                    <td><?= htmlspecialchars($row['title']) ?></td>
+                    <td><?= htmlspecialchars($row['description']) ?></td>
+                    <td><?= htmlspecialchars($row['assigned_user'] ?? 'Unassigned') ?></td>
+                    <td class="action-buttons">
+                        <a href="admin-dash.php?page=task_edit&id=<?= $user['id'] ?>">Edit</a>
+                        <a href="delete_task.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this task?')">Delete</a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr><td colspan="5" class="no-data">No tasks found.</td></tr>
+        <?php endif; ?>
+    </table>
+</div>
 </body>
 </html>

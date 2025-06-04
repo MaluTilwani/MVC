@@ -7,7 +7,7 @@ session_start();
 class TaskController {
 public function edit($id) {
     $task = $this->taskModel->getById($id);
-    $users = $this->userModel->getAllExceptAdmins(); 
+    $users = $this->userModel->getAllExceptAdmins();
     include 'views/tasks/edit.php';
 }
 

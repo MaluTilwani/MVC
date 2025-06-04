@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($updated) {
         echo "<script>
                 alert('Task updated successfully.');
-                window.location.href = 'manage_task.php';
+                window.location.href ='admin-dash.php?page=task_edit';
               </script>";
         exit;
     } else {

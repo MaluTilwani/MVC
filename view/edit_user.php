@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once "../model/User.php";
 $userModel = new User();
 
@@ -8,7 +7,7 @@ $message = '';
 
 if (!$id) {
     header("Location: manage_users.php");
-    exit;
+    exit;   
 }
 
 $userData = $userModel->getUserById($id);
@@ -16,14 +15,13 @@ $userData = $userModel->getUserById($id);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
-    $role = $_POST['role'];
 
-    $updated = $userModel->updateUser($id, $name, $email, $role);
+    $updated = $userModel->updateUser($id, $name, $email);
 
     if ($updated) {
         echo "<script>
                 alert('User updated successfully.');
-                window.location.href = 'manage_users.php';
+                window.location.href = 'admin-dash.php?page=manage_user';
               </script>";
         exit;
     } else {
@@ -97,11 +95,11 @@ button:hover {
         <form method="POST">
             <input type="text" name="name" value="<?= htmlspecialchars($userData['name']) ?>" required>
             <input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" required>
-            <select name="role" required>
+            <!-- <select name="role" required>
                 <option value="admin" <?= $userData['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
                 <option value="teamleader" <?= $userData['role'] == 'teamleader' ? 'selected' : '' ?>>Team Leader</option>
                 <option value="employee" <?= $userData['role'] == 'employee' ? 'selected' : '' ?>>Employee</option>
-            </select>
+            </select> -->
             <button type="submit">Update User</button>
         </form>
     <?php else: ?>

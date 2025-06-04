@@ -2,17 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");  // Adjust the path to your login.php
     exit;
 }
 
-$role = strtolower($_SESSION['user']['role']);
-
-if ($role == 'admin') {
-    include "./view/admin-dash.php";
-} elseif ($role == 'teamleader') {
-    include "./view/team-dash.php";
-} elseif ($role == 'employee') {
-    include "./view/emp-dash.php";
-}
+// If logged in, show task1 dashboard or homepage here
+echo "<h1>Welcome to Task1 Section, " . htmlspecialchars($_SESSION['user']['name']) . "</h1>";
 ?>
+
