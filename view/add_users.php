@@ -4,34 +4,52 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['user'])) {
-    // If accessed directly without login, redirect to login
     if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
         header('Location: login.php');
         exit;
     } else {
-        // If included inside another page, just stop rendering
         echo "<p style='color:red; text-align:center;'>Please log in to access this section.</p>";
         return;
     }
 }
+
 require_once "../model/User.php"; 
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $name     = trim($_POST['name'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $phone    = trim($_POST['phone'] ?? '');
+    $role     = $_POST['role'] ?? '';
+    $gender   = $_POST['gender'] ?? '';
+    $address  = trim($_POST['address'] ?? '');
 
-    if ($name && $email && $password) {
-        $userModel = new User();
-        $success = $userModel->register ($name, $email, $password);
-        if ($success) {
-            $message = "User added successfully!";
+    $profilePicturePath = '';
+
+    if ($name && $email && $password && $phone && $role && $gender && $address && isset($_FILES['profile_picture'])) {
+        // File upload handling
+        $uploadDir = '../uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $fileTmp  = $_FILES['profile_picture']['tmp_name'];
+        $fileName = basename($_FILES['profile_picture']['name']);
+        $targetPath = $uploadDir . time() . '_' . $fileName;
+
+        if (move_uploaded_file($fileTmp, $targetPath)) {
+            $profilePicturePath = $targetPath;
+
+            $userModel = new User();
+            $success = $userModel->addUser($name, $email, $password, $phone, $role, $gender, $address, $profilePicturePath);
+
+            $message = $success ? "User added successfully!" : "Error: Could not add user. Email might already exist.";
         } else {
-            $message = "Error: Could not add user. Email might already exist.";
+            $message = "Failed to upload profile picture.";
         }
     } else {
-        $message = "Please fill all fields.";
+        $message = "Please fill in all fields.";
     }
 }
 ?>
@@ -44,31 +62,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f9f6f4;
-            padding: 40px;
             margin: 0;
+            padding: 10px;
         }
 
         .form-container {
-            width: 80%;
-            max-width: 1200px;
+            width: 100%;
+            max-width: 600px;
             margin: auto;
             background: #fff;
-            padding: 30px 40px;
+            padding: 20px 25px;
             border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid #e0cfc8;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 26px;
+            margin-bottom: 15px;
+            font-size: 22px;
             color: #6d4c41;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 600;
             color: #4e342e;
         }
@@ -76,23 +94,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input[type="text"],
         input[type="email"],
         input[type="password"],
-        select {
+        input[type="file"],
+        select,
+        textarea {
             width: 100%;
-            padding: 14px;
-            margin-bottom: 20px;
-            font-size: 1rem;
-            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            border-radius: 5px;
             border: 1px solid #d7ccc8;
             background-color: #fcfcfc;
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
         }
 
         input[type="submit"] {
             background-color: #8d6e63;
             color: #fff;
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 6px;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
@@ -106,34 +131,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .message {
             text-align: center;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #388e3c;
         }
 
         .error {
             color: #d32f2f;
         }
-
-        @media (max-width: 768px) {
-            .form-container {
-                width: 95%;
-                padding: 25px;
-            }
-        }
     </style>
 </head>
 <body>
-
 <div class="form-container">
     <h2>Add New User</h2>
 
-    <?php if ($message): ?>
-        <div class="message <?php echo strpos($message, 'Error') !== false ? 'error' : ''; ?>">
-            <?php echo htmlspecialchars($message); ?>
-        </div>
-    <?php endif; ?>
+    <form method="POST" enctype="multipart/form-data" action="">
+    <input type="hidden" name="form_type" value="add_user">
 
-    <form method="POST" action="">
         <label for="name">Full Name:</label>
         <input type="text" name="name" id="name" placeholder="Enter full name" required>
 
@@ -142,6 +155,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" placeholder="Enter password" required>
+
+        <label for="phone">Phone Number:</label>
+        <input type="text" name="phone" id="phone" placeholder="Enter phone number" required>
+
+        <label for="role">Role:</label>
+        <select name="role" id="role" required>
+            <option value="">--Select Role--</option>
+            <option value="employee">Employee</option>
+            <option value="team">Team</option>
+        </select>
+
+        <label for="gender">Gender:</label>
+        <select name="gender" id="gender" required>
+            <option value="">--Select Gender--</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="address">Address:</label>
+        <textarea name="address" id="address" placeholder="Enter address" required></textarea>
+
+        <label for="profile_picture">Profile Picture:</label>
+        <input type="file" name="profile_picture" accept="image/*" required>
 
         <input type="submit" value="Add User">
     </form>

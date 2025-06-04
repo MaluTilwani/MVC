@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require_once "../model/Task.php";
 require_once "../model/User.php";
 
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($updated) {
         echo "<script>
                 alert('Task updated successfully.');
-                window.location.href ='admin-dash.php?page=task_edit';
+                window.location.href ='admin-dash.php?page=manage_task';
               </script>";
         exit;
     } else {

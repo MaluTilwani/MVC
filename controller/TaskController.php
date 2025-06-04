@@ -1,17 +1,26 @@
 <?php
+
 require_once "../model/User.php";
 require_once "../model/Task.php";
 
-session_start();
 
-class TaskController {
-public function edit($id) {
-    $task = $this->taskModel->getById($id);
-    $users = $this->userModel->getAllExceptAdmins();
-    include 'views/tasks/edit.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Handle update
+class TaskController {
+    private $taskModel;
+
+     public function __construct() {
+        $this->userModel = new User();
+     }
+
+// public function edit($id) {
+//     $task = $this->taskModel->getById($id);
+//     $users = $this->userModel->getAllExceptAdmins();
+//     include 'views/tasks/edit.php';
+// }
+
 public function update($id) {
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -24,6 +33,6 @@ public function update($id) {
 // Handle delete
 public function delete($id) {
     $this->taskModel->delete($id);
-    header("Location: /tasks");
+    header("Location: manage_task.php");
 }
 }

@@ -7,25 +7,31 @@ $message = '';
 
 if (!$id) {
     header("Location: manage_users.php");
-    exit;   
+    exit;
 }
 
 $userData = $userModel->getUserById($id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get and sanitize form inputs
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
+    $phone = trim($_POST['phone'] ?? '');
+    $gender = $_POST['gender'] ?? '';
+    $address = trim($_POST['address'] ?? '');
+    $role = $_POST['role'] ?? '';
 
-    $updated = $userModel->updateUser($id, $name, $email);
+    // Call update method
+    $result = $userModel->updateUser($id, $name, $email, $phone, $gender, $address, $role);
 
-    if ($updated) {
+    if ($result['status']) {
         echo "<script>
-                alert('User updated successfully.');
+                alert('{$result['message']}');
                 window.location.href = 'admin-dash.php?page=manage_user';
               </script>";
         exit;
     } else {
-        $message = "Error updating user. Email might already exist.";
+        $message = $result['message'];
     }
 }
 ?>
@@ -35,14 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Edit User</title>
     <style>
 .form-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 25px;
-    background: #fcfcfc; /* very light gray */
-    border-radius: 10px;
+    width: 100%;
+    max-width: 600px; 
+    margin: 60px auto;
+    padding: 30px 40px;
+    background: #fcfcfc;
+    border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.08);
     font-family: Arial, sans-serif;
+    box-sizing: border-box;
 }
+
+
 
 input, select {
     width: 100%;
@@ -60,6 +70,17 @@ input:focus, select:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(109, 76, 65, 0.4);
 }
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px; /* ensures space between address and role */
+    border-radius: 6px;
+    border: 1px solid #d7ccc8;
+    background-color: #fff;
+    font-size: 1rem;
+    resize: vertical;
+}
+
 
 button {
     width: 100%;
@@ -93,13 +114,28 @@ button:hover {
     <?php endif; ?>
     <?php if ($userData): ?>
         <form method="POST">
-            <input type="text" name="name" value="<?= htmlspecialchars($userData['name']) ?>" required>
-            <input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" required>
-            <!-- <select name="role" required>
-                <option value="admin" <?= $userData['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                <option value="teamleader" <?= $userData['role'] == 'teamleader' ? 'selected' : '' ?>>Team Leader</option>
-                <option value="employee" <?= $userData['role'] == 'employee' ? 'selected' : '' ?>>Employee</option>
-            </select> -->
+           Name:<input type="text" name="name" value="<?= htmlspecialchars($userData['name']) ?>" required>
+
+            Email:<input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" required>
+
+            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone']) ?>" required>
+
+             Gender:<select name="gender" required>
+             <option value="">Select Gender</option>
+                <option value="male" <?= $userData['gender'] === 'male' ? 'selected' : '' ?>>Male</option>
+                <option value="female" <?= $userData['gender'] === 'female' ? 'selected' : '' ?>>Female</option>
+                <option value="other" <?= $userData['gender'] === 'other' ? 'selected' : '' ?>>Other</option>
+            </select><br/>
+
+             Address:<textarea name="address" required><?= htmlspecialchars($userData['address']) ?></textarea>
+
+            Role:<select name="role" required>
+                <option value="">Select Role</option>
+                <option value="team" <?= $userData['role'] === 'team' ? 'selected' : '' ?>>Team</option>
+                <option value="employee" <?= $userData['role'] === 'employee' ? 'selected' : '' ?>>Employee</option>
+            </select>
+
+             
             <button type="submit">Update User</button>
         </form>
     <?php else: ?>

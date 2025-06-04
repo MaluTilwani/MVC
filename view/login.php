@@ -1,7 +1,9 @@
 <?php
 require_once "../controller/AuthController.php";
-$controller = new AuthController();
-$controller->login();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $auth = new AuthController();
+    $auth->login();
+}
 ?>
 <!DOCTYPE html>
 <html>

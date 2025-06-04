@@ -1,7 +1,10 @@
 <?php
 require_once "../controller/AuthController.php";
-$controller = new AuthController();
-$controller->register();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $auth = new AuthController();
+    $auth->registerUser();
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -12,7 +15,10 @@ $controller->register();
 </head>
 <body>
     <h2>Register</h2>
-    <form method="POST" onsubmit="return validateRegisterForm();">
+    <form method="POST" action="">
+  <input type="hidden" name="form_type" value="register">
+
+    <form method="POST" action="index.php?controller=auth&action=register" onsubmit="return validateRegisterForm();">
         Enter Name:<input type="text" name="name" placeholder="Name" id="name" required><br>
         Enter email:<input type="email" name="email" placeholder="Email" id="email" required><br>
         Enter Password:<input type="password" name="password" placeholder="Password" id="password" required><br>

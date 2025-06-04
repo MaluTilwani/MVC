@@ -1,86 +1,77 @@
 <?php
-$adminName = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : 'Teamleader';
+session_start();
+
+require_once "../model/User.php";
+$userModel = new User();
+
+$totalEmployees = $userModel->countUsersByRole('employee');
+$totalTeamLeaders = $userModel->countUsersByRole('team');
+
+$adminName = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : 'Admin';
+
+$page = isset($_GET['page']) ? $_GET['page'] : '';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Team Leader Dashboard</title>
-<style>
- :root {
-    --light-brown: #f3e5f5;
-    --brown: #a1887f;
-    --gray: #fafafa;
-    --dark-gray: #8d6e63;
-    --text: #3e2723;
-    --white: #ffffff;
-    --hover-brown: #8d6e63;
-    --logout-red: #ff8a80;
-    --logout-hover: #e57373;
-}
-
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--gray);
-    color: var(--text);
-    margin: 0;
-    padding: 0;
-}
-
-.dashboard-container {
-    max-width: 700px;
-    margin: 50px auto;
-    padding: 30px;
-    background-color: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-    text-align: center;
-    border: 1px solid var(--light-brown);
-}
-
-.dashboard-container h2 {
-    color: var(--brown);
-    margin-bottom: 20px;
-}
-
-.welcome-msg {
-    font-size: 18px;
-    color: var(--dark-gray);
-    margin-bottom: 30px;
-}
-
-.btn {
-    display: inline-block;
-    margin: 10px 8px;
-    padding: 10px 22px;
-    background-color: var(--brown);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-    background-color: var(--hover-brown);
-}
-
-.btn.logout {
-    background-color: var(--logout-red);
-}
-
-.btn.logout:hover {
-    background-color: var(--logout-hover);
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Team-Leader Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/dash.css" />
 </head>
 <body>
-    <div class="dashboard-container">
-    <h2>Welcome Team Leader</h2>
-    <div class="welcome-msg">Welcome Team Leader <strong><?php echo htmlspecialchars ($adminName); ?></strong></div>
-    <a href="add_users.php" class="btn">Add User</a>
-    <a href="add_task.php" class="btn">Add Task</a>
-    <a href="manage_task.php" class="btn">Manage Tasks</a>
-    <a href="logout.php" class="btn">Logout</a>
+  <div class="sidebar">
+    <div class="profile">
+      <h2>Welcome Team-Leader<br><span><h2><?php echo htmlspecialchars($adminName); ?></span></h2>
     </div>
+    <ul class="menu">
+      <li class="active" href="team-dash.php?page=manage_user"><i class="fas fa-tachometer-alt"> Team-Leader Dashboard</i></li>
+       <li><a href="team-dash.php?page=add_user"><i class="fas fa-user-plus"> Add User</i></a></li>
+      <li><a href="team-dash.php?page=add_task"><i class="fas fa-tasks"> Add Task</i></a></li>
+      <li><a href="team-dash.php?page=manage_task"><i class="fas fa-tasks"> Manage Tasks</i></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>Team Leader Dashboard</h1>
+      <ul class="header-actions">
+        <li><a href="team-dash.php?page=update_profile" class="profile">Change Profile</a></li>
+        
+        <li><a href="logout.php" class="logout">Logout</a></li>
+      </ul>
+    </header>
+
+    <div class="dashboard-cards">
+      <?php
+        if ($page === 'add_user') {
+            include 'add_users.php'; 
+        }
+        elseif ($page === 'add_task') {
+            include 'add_task.php';
+        }
+        elseif ($page === 'manage_task') {
+            include 'manage_task.php';
+        }
+        elseif ($page === 'update_profile') {
+            include 'update_profile.php';
+        }elseif ($page === 'task_edit' && isset($_GET['id'])) {
+            include 'task_edit.php';
+        }else {
+            ?>
+            <div class="card">
+              <h3>Total Employees</h3>
+              <p><?= $totalEmployees ?></p>
+            </div>
+            <div class="card">
+              <h3>Total Team Leaders</h3>
+              <p><?= $totalTeamLeaders ?></p>
+            </div>
+            <?php
+        }
+      ?>
+    </div>
+  </div>
 </body>
 </html>

@@ -108,6 +108,17 @@ header {
   margin: 0;
   padding: 0;
 }
+li a {
+    text-decoration: none;
+    color: #6d4c41;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #5a382e;
+}
+
 
 /* Common button-like style */
 .header-actions li a {

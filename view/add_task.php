@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $assigned_to = $_POST['assigned_to'];
 
     if ($taskModel->addTask($title, $description, $assigned_to)) {
-        echo "<script>alert('Task added successfully'); window.location.href='manage_tasks.php';</script>";
+        echo "<script>alert('Task added successfully'); window.location.href='manage_task.php';</script>";
     } else {
         echo "<script>alert('Failed to add task');</script>";
     }

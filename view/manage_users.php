@@ -85,13 +85,18 @@ a:hover {
     <h2>Manage Users</h2>
     <table>
         <tr>
-             <th>id</th><th>Name</th><th>Email</th><th>Actions</th>
+             <th>id</th><th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Address</th><th>Profile_picture</th><th>Role</th><th>Actions</th>
         </tr>
         <?php foreach ($users as $user): ?>
         <tr>
             <td><?= htmlspecialchars($user['id']) ?></td>
             <td><?= htmlspecialchars($user['name']) ?></td>
             <td><?= htmlspecialchars($user['email']) ?></td>
+            <td><?= htmlspecialchars($user['phone']) ?></td>
+            <td><?= htmlspecialchars($user['gender']) ?></td>
+            <td><?= htmlspecialchars($user['address']) ?></td>
+            <td><?= htmlspecialchars($user['profile_picture']) ?></td>
+            <td><?= htmlspecialchars($user['role']) ?></td>
             <td class="action-buttons">
                 <a href="admin-dash.php?page=edit_user&id=<?= $user['id'] ?>">Edit</a>
                 <a href="delete_user.php?id=<?= $user['id'] ?>" onclick="return confirm('Delete this user?')">Delete</a>

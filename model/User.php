@@ -1,19 +1,38 @@
 <?php
 require_once "../config/config.php";
 
-class User {
-    private $conn;
+class User extends Database {
 
     public function __construct() {
-        $db = new Database();
-        $this->conn = $db->connect();
+        require_once '../config/config.php'; 
+        $database = new Database();
+        $this->conn = $database->connect(); 
+        }
+
+ public function registerUser($name, $email, $password) {
+    $stmt = $this->conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $name, $email, $password);
+    return $stmt->execute();
+}
+
+
+ public function addUser($name, $email, $password, $phone, $role, $gender, $address, $profile_picture) {
+        $stmt = $this->conn->prepare("INSERT INTO users (name, email, password, phone, role, gender, address, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssss", $name, $email, $password, $phone, $role, $gender, $address, $profile_picture);
+        return $stmt->execute();
     }
 
-    public function register($name, $email, $password) {
-        $password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $name, $email, $password);
-        return $stmt->execute();
+    public function getAllUsers() {
+        $stmt = $this->conn->prepare("SELECT * FROM users ORDER BY id ASC");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getUserById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
     }
 
     public function login($email, $password) {
@@ -31,14 +50,8 @@ class User {
         } else {
          echo "<script>alert('Email not found.');</script>";
         return "email_not_found";
+        }
     }
-    }
-    }
-    public function getAllUsers() {
-    $stmt = $this->conn->prepare("SELECT id, name, email FROM users ORDER BY id ASC");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_all(MYSQLI_ASSOC);
 }
 public function getAll() {
     $stmt = $this->conn->prepare("SELECT * FROM users");
@@ -46,40 +59,45 @@ public function getAll() {
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-public function getUserById($id) {
-    $stmt = $this->conn->prepare("SELECT id, name, email FROM users WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc();
-}
+// public function getUserById($id) {
+//     $stmt = $this->conn->prepare("SELECT id, name, email FROM users WHERE id = ?");
+//     $stmt->bind_param("i", $id);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+//     return $result->fetch_assoc();
+// }
 
-public function updateUser($id, $name, $email) {
-    // Check for duplicate email (excluding current user)
-    $stmt = $this->conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-    $stmt->bind_param("si", $email, $id);
+public function updateUser($id, $name, $email, $phone, $gender, $address, $role) {
+    // Check for duplicate email or phone for other users
+    $stmt = $this->conn->prepare("SELECT id FROM users WHERE (email = ? OR phone = ?) AND id != ?");
+    if (!$stmt) {
+        return ['status' => false, 'message' => 'Prepare failed: ' . $this->conn->error];
+    }
+
+    $stmt->bind_param("ssi", $email, $phone, $id);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
         $stmt->close();
-        // Email exists alert
-        echo "<script>alert('Email already exists. Update failed.');</script>";
-        return false;
+        return ['status' => false, 'message' => 'Email or phone number already exists.'];
     }
     $stmt->close();
 
-    $stmt = $this->conn->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $name, $email, $id);
+    // Update user details
+    $stmt = $this->conn->prepare("UPDATE users SET name = ?, email = ?, phone = ?, gender = ?, address = ?, role = ? WHERE id = ?");
+    if (!$stmt) {
+        return ['status' => false, 'message' => 'Prepare failed: ' . $this->conn->error];
+    }
+
+    $stmt->bind_param("ssssssi", $name, $email, $phone, $gender, $address, $role, $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('User updated successfully!');</script>";
         $stmt->close();
-        return true;
+        return ['status' => true, 'message' => 'User updated successfully.'];
     } else {
-        echo "<script>alert('Failed to update user.');</script>";
         $stmt->close();
-        return false;
+        return ['status' => false, 'message' => 'Failed to update user.'];
     }
 }
 public function deleteUser($id) {
@@ -87,4 +105,13 @@ public function deleteUser($id) {
     $stmt->bind_param("i", $id);
     return $stmt->execute();
 }
+
+public function countUsersByRole($role) {
+    $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM users WHERE role = ?");
+    $stmt->bind_param("s", $role);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    return $result['total'] ?? 0;
+}
+
 }
