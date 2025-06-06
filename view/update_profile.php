@@ -15,8 +15,9 @@ if (!isset($_SESSION['user']['id'])) {
 }
 
 $userId = $_SESSION['user']['id'];
+$isAdmin = $_SESSION['user']['is_admin'] ?? 0;
 
-// Fetch current user data from DB
+// Fetch user data
 $query = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $userId);
@@ -24,27 +25,89 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-$message = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    $fieldsToUpdate = [];
+    $params = [];
+    $types = '';
 
-    if ($name && $email) {
-        $updateQuery = "UPDATE users SET name = ?, email = ? WHERE id = ?";
-        $updateStmt = $conn->prepare($updateQuery);
-        $updateStmt->bind_param("ssi", $name, $email, $userId);
-        if ($updateStmt->execute()) {
-            $message = "Profile updated successfully!";
-            $_SESSION['user']['name'] = $name;
-            $_SESSION['user']['email'] = $email;
-            $user['name'] = $name;
-            $user['email'] = $email;
-        } else {
-            $message = "Update failed. Try again.";
+    // Optional fields
+    if (!empty(trim($_POST['name']))) {
+        $fieldsToUpdate[] = "name = ?";
+        $params[] = trim($_POST['name']);
+        $types .= 's';
+    }
+
+    if (!empty(trim($_POST['email']))) {
+        $fieldsToUpdate[] = "email = ?";
+        $params[] = trim($_POST['email']);
+        $types .= 's';
+    }
+
+    if (!empty(trim($_POST['phone']))) {
+        $fieldsToUpdate[] = "phone = ?";
+        $params[] = trim($_POST['phone']);
+        $types .= 's';
+    }
+
+    if (!$isAdmin && !empty($_POST['role'])) {
+        $fieldsToUpdate[] = "role = ?";
+        $params[] = $_POST['role'];
+        $types .= 's';
+    }
+
+    if (!empty($_POST['gender'])) {
+        $fieldsToUpdate[] = "gender = ?";
+        $params[] = $_POST['gender'];
+        $types .= 's';
+    }
+
+    if (!empty(trim($_POST['address']))) {
+        $fieldsToUpdate[] = "address = ?";
+        $params[] = trim($_POST['address']);
+        $types .= 's';
+    }
+
+    // Handle profile picture
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $tmpName = $_FILES['profile_picture']['tmp_name'];
+        $fileName = time() . '_' . basename($_FILES['profile_picture']['name']);
+        $targetPath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($tmpName, $targetPath)) {
+            $fieldsToUpdate[] = "profile_picture = ?";
+            $params[] = $targetPath;
+            $types .= 's';
+        }
+    }
+
+    if (!empty($fieldsToUpdate)) {
+        $query = "UPDATE users SET " . implode(', ', $fieldsToUpdate) . " WHERE id = ?";
+        $params[] = $userId;
+        $types .= 'i';
+
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param($types, ...$params);
+
+        if ($stmt->execute()) {
+    foreach ($fieldsToUpdate as $index => $field) {
+        $key = trim(explode('=', $field)[0]);
+        $_SESSION['user'][$key] = $params[$index];
+    }
+
+    header("Location: admin-dash.php?page=view_profile");
+    exit;
+} else {
+           echo "<script>alert('Update failed. Try again.');</script>";
+
         }
     } else {
-        $message = "Please fill all fields.";
+           echo "<script>alert('No changes detected..');</script>";
+
     }
 }
 ?>
@@ -63,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-container {
-            width: 80%;
+            width: 100%;
             max-width: 600px;
             margin: auto;
             background: #fff;
@@ -139,20 +202,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="form-container">
     <h2>Update Profile</h2>
 
-    <?php if ($message): ?>
-        <div class="message <?php echo strpos($message, 'failed') !== false || strpos($message, 'fill') !== false ? 'error' : ''; ?>">
-            <?= htmlspecialchars($message) ?>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" action="">
+    <form method="POST" action="" enctype="multipart/form-data">
         <label for="name">Full Name:</label>
         <input type="text" name="name" id="name" value="<?= htmlspecialchars($user['name']) ?>" required>
 
-        <label for="email">Email Address:</label>
-        <input type="email" name="email" id="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+        <label <div class="form-container">
+    <h2>Update Profile</h2>
 
-        <button type="submit">Update Profile</button>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label for="name">Full Name:</label>
+        <input type="text" name="name" value="<?= htmlspecialchars($user['name']) ?>" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+
+        <label for="phone">Phone Number:</label>
+        <input type="text" name="phone" value="<?= htmlspecialchars($user['phone']) ?>" required>
+
+        <?php if (!$isAdmin): ?>
+        <label for="role">Role:</label>
+        <select name="role" id="role" required>
+            <option value="">-- Select Role --</option>
+            <option value="team member" <?= $user['role'] === 'team member' ? 'selected' : '' ?>>Team Member</option>
+            <option value="employee" <?= $user['role'] === 'employee' ? 'selected' : '' ?>>Employee</option>
+        </select>
+    <?php endif; ?>
+
+        <label for="gender">Gender:</label>
+        <select name="gender" required>
+            <option value="">--Select Gender--</option>
+            <option value="male" <?= $user['gender'] === 'male' ? 'selected' : '' ?>>Male</option>
+            <option value="female" <?= $user['gender'] === 'female' ? 'selected' : '' ?>>Female</option>
+            <option value="other" <?= $user['gender'] === 'other' ? 'selected' : '' ?>>Other</option>
+        </select>
+
+        <label for="address">Address:</label>
+        <textarea name="address" required><?= htmlspecialchars($user['address']) ?></textarea>
+
+        <label for="profile_picture">Change Profile Picture:</label>
+        <input type="file" name="profile_picture" accept="image/*">
+
+        <?php if (!empty($user['profile_picture'])): ?>
+            <p>Current Image:</p>
+            <img src="<?= htmlspecialchars($user['profile_picture']) ?>" alt="Profile Picture" style="width:100px;height:auto;border-radius:6px;margin-bottom:15px;">
+        <?php endif; ?>
+
+        <button type="submit" href="admin-dash.php?page=view_profile">Update Profile</button>
     </form>
 </div>
 

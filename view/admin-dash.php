@@ -13,7 +13,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard</title>
@@ -38,13 +37,12 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
     <header>
       <h1>Admin Dashboard</h1>
       <ul class="header-actions">
-        <li><a href="admin-dash.php?page=update_profile" class="profile">Change Profile</a></li>
-        
+        <li><a href="admin-dash.php?page=view_profile" class="profile">Change Profile</a></li>
         <li><a href="logout.php" class="logout">Logout</a></li>
       </ul>
     </header>
 
-    <div class="dashboard-cards">
+    <div class="dashboard-card">
       <?php
         if ($page === 'add_user') {
             include 'add_users.php'; 
@@ -57,12 +55,16 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
         }
         elseif ($page === 'manage_task') {
             include 'manage_task.php';
+        }elseif ($page === 'delete_user') {
+            include 'delete_user.php';
         }elseif ($page === 'edit_user' && isset($_GET['id'])) {
             include 'edit_user.php';
         }elseif ($page === 'update_profile') {
             include 'update_profile.php';
         }elseif ($page === 'task_edit' && isset($_GET['id'])) {
             include 'task_edit.php';
+        }elseif ($page === 'view_profile') {
+            include 'view_profile.php';
         }else {
             ?>
             <div class="card">

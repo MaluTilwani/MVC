@@ -110,7 +110,7 @@ $result = $conn->query($sql);
                     <td><?= htmlspecialchars($row['assigned_user'] ?? 'Unassigned') ?></td>
                     <td class="action-buttons">
                         <a href="admin-dash.php?page=task_edit&id=<?= $row['id'] ?>">Edit</a>
-                        <a href="delete_task.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this task?')">Delete</a>
+                        <a href="" onclick="return confirm('Delete this task?')">Delete</a>
                     </td>
                 </tr>
             <?php endwhile; ?>

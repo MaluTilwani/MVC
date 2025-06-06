@@ -98,8 +98,9 @@ a:hover {
             <td><?= htmlspecialchars($user['profile_picture']) ?></td>
             <td><?= htmlspecialchars($user['role']) ?></td>
             <td class="action-buttons">
-                <a href="admin-dash.php?page=edit_user&id=<?= $user['id'] ?>">Edit</a>
-                <a href="delete_user.php?id=<?= $user['id'] ?>" onclick="return confirm('Delete this user?')">Delete</a>
+            <a href="admin-dash.php?page=edit_user&id=<?= $user['id'] ?>">Edit</a>
+            <a href="" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+
             </td>
         </tr>
         <?php endforeach; ?>
