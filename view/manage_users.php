@@ -1,6 +1,4 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
 
 require_once "../model/User.php";
@@ -12,6 +10,7 @@ $users = $userModel->getAllUsers();
 <html>
 <head>
     <title>Manage Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
  body {
     font-family: 'Segoe UI', sans-serif;
@@ -85,7 +84,7 @@ a:hover {
     <h2>Manage Users</h2>
     <table>
         <tr>
-             <th>id</th><th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Address</th><th>Profile_picture</th><th>Role</th><th>Actions</th>
+             <th>id</th><th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Role</th><th>Status</th></th><th>Actions</th>
         </tr>
         <?php foreach ($users as $user): ?>
         <tr>
@@ -94,12 +93,22 @@ a:hover {
             <td><?= htmlspecialchars($user['email']) ?></td>
             <td><?= htmlspecialchars($user['phone']) ?></td>
             <td><?= htmlspecialchars($user['gender']) ?></td>
-            <td><?= htmlspecialchars($user['address']) ?></td>
-            <td><?= htmlspecialchars($user['profile_picture']) ?></td>
             <td><?= htmlspecialchars($user['role']) ?></td>
+              <td>
+                <?php
+                $role = strtolower($user['role']);
+                if ($role === 'admin' || $role === 'employee'|| $role === 'team') {
+                    echo '<span class="badge bg-success">Active</span>';
+                } else {
+                    echo '<span class="badge bg-danger">Inactive</span>';
+                }
+                ?>
+            </td>
             <td class="action-buttons">
             <a href="admin-dash.php?page=edit_user&id=<?= $user['id'] ?>">Edit</a>
+             <a href="admin-dash.php?page=detail_view&id=<?= $user['id'] ?>">view</a>
             <a href="" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+
 
             </td>
         </tr>

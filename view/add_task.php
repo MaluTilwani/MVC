@@ -9,8 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $assigned_to = $_POST['assigned_to'];
+    $due_date = $_POST['due_date']; 
+    $priority = $_POST['priority']; 
+    $status = $_POST['status']; 
 
-    if ($taskModel->addTask($title, $description, $assigned_to)) {
+    if ($taskModel->addTask($title, $description, $assigned_to, $due_date, $priority, $status)) {
         echo "<script>alert('Task added successfully'); window.location.href='manage_task.php';</script>";
     } else {
         echo "<script>alert('Failed to add task');</script>";
@@ -113,13 +116,35 @@ $users = $userModel->getAllUsers();
         <select name="assigned_to" id="assigned_to" required>
             <option value="">-- Select User --</option>
             <?php foreach ($users as $user): ?>
-                <?php if (!isset($user['role']) || $user['role'] !== 'admin'): ?>
+                    <?php if ($user['is_admin'] != 1): ?>
+
                     <option value="<?= htmlspecialchars($user['id']) ?>">
                         <?= htmlspecialchars($user['name']) ?>
                     </option>
                 <?php endif; ?>
             <?php endforeach; ?>
         </select>
+        <label for="due_date">Due Date:</label>
+        <input type="date" name="due_date" id="due_date" required>
+
+        <label for="priority">Priority:</label>
+        <select name="priority" id="priority" required>
+        <option value="">-- Select Priority --</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+        <option value="Urgent">Urgent</option>
+        </select>
+        
+        <label for="status">Status:</label>
+        <select name="status" id="status" required>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="On Hold">On Hold</option>
+        </select>
+
+
 
         <input type="submit" value="Add Task">
     </form>

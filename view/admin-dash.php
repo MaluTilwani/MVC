@@ -2,10 +2,12 @@
 session_start();
 
 require_once "../model/User.php";
+  
 $userModel = new User();
 
 $totalEmployees = $userModel->countUsersByRole('employee');
 $totalTeamLeaders = $userModel->countUsersByRole('team');
+$totalAdmins = $userModel->countUsersByRole('admin');
 
 $adminName = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : 'Admin';
 
@@ -61,6 +63,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
             include 'edit_user.php';
         }elseif ($page === 'update_profile') {
             include 'update_profile.php';
+        }elseif ($page === 'filter_view') {
+            include 'filter_view.php';
+        }elseif ($page === 'detail_view') {
+            include 'detail_view.php';
         }elseif ($page === 'task_edit' && isset($_GET['id'])) {
             include 'task_edit.php';
         }elseif ($page === 'view_profile') {

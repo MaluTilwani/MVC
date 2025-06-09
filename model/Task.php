@@ -9,11 +9,14 @@ class Task extends Database {
         $this->conn = $database->connect(); 
         }
         
-    public function addTask($title, $description, $assigned_to) {
-        $stmt = $this->conn->prepare("INSERT INTO tasks (title, description, assigned_to) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $title, $description, $assigned_to);
-        return $stmt->execute();
-    }
+    public function addTask($title, $description, $assigned_to, $due_date, $priority, $status) {
+    $stmt = $this->conn->prepare("INSERT INTO tasks (title, description, assigned_to, due_date, priority, status) 
+                                 VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssss", $title, $description, $assigned_to, $due_date, $priority, $status);
+   
+    return $stmt->execute();
+}
+
 
     public function getAllTasks() {
         $stmt = $this->conn->query("SELECT tasks.*, users.name AS assignee FROM tasks LEFT JOIN users ON users.id = tasks.assigned_to ORDER BY tasks.id ASC");

@@ -1,5 +1,6 @@
 <?php
 require_once '../config/config.php';
+// include '../view/filter_view.php';
 
 $db = new Database();
 $conn = $db->connect();
@@ -32,7 +33,7 @@ $result = $conn->query($sql);
         .table-container {
             max-width: 100%;
             overflow-x: auto;
-            margin: 20px auto;
+            margin: 40px auto;
             background-color: #ffffff;
             padding: 20px;
             border-radius: 10px;
@@ -92,7 +93,9 @@ $result = $conn->query($sql);
 <body>
 
 <div class="table-container">
+     <a href="admin-dash.php?page=filter_view" style="margin-left:90%;">Search By Filter</a>
     <h2>Manage Tasks</h2>
+
     <table>
         <tr>
             <th>ID</th>
@@ -110,14 +113,14 @@ $result = $conn->query($sql);
                     <td><?= htmlspecialchars($row['assigned_user'] ?? 'Unassigned') ?></td>
                     <td class="action-buttons">
                         <a href="admin-dash.php?page=task_edit&id=<?= $row['id'] ?>">Edit</a>
-                        <a href="" onclick="return confirm('Delete this task?')">Delete</a>
+                        <a href="" onclick="return confirm('You want to delete this task?')">Delete</a>
                     </td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr><td colspan="5" class="no-data">No tasks found.</td></tr>
         <?php endif; ?>
-    </table>
-</div>
-</body>
-</html>
+        </table>
+        </div>      
+        </body>
+        </html>
