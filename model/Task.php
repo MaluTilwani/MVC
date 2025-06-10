@@ -10,10 +10,8 @@ class Task extends Database {
         }
         
     public function addTask($title, $description, $assigned_to, $due_date, $priority, $status) {
-    $stmt = $this->conn->prepare("INSERT INTO tasks (title, description, assigned_to, due_date, priority, status) 
-                                 VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssss", $title, $description, $assigned_to, $due_date, $priority, $status);
-   
+    $stmt = $this->conn->prepare("INSERT INTO tasks (title, description, assigned_to, due_date, priority, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssisss", $title, $description, $assigned_to, $due_date, $priority, $status);
     return $stmt->execute();
 }
 
@@ -30,9 +28,9 @@ class Task extends Database {
         return $stmt->get_result()->fetch_assoc();
     }
 
-    public function update($id, $title, $description, $assigned_to) {
-        $stmt = $this->conn->prepare("UPDATE tasks SET title = ?, description = ?, assigned_to = ? WHERE id = ?");
-        $stmt->bind_param("ssii", $title, $description, $assigned_to, $id);
+    public function update($id, $title, $description, $assigned_to, $due_date, $priority, $status) {
+        $stmt = $this->conn->prepare("UPDATE tasks SET title = ?, description = ?, assigned_to = ?, due_date = ?, priority = ?, status = ? WHERE id = ?");
+        $stmt->bind_param("ssisssi", $title, $description, $assigned_to,$due_date, $priority, $status, $id);
         return $stmt->execute();
     }
 

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 window.location.href = 'admin-dash.php?page=manage_user';
               </script>";
         exit;
-    }else {
+    } else {
         $message = $result['message'];
     }
 }
@@ -114,13 +114,13 @@ button:hover {
     <?php endif; ?>
     <?php if ($userData): ?>
         <form method="POST">
-           Name:<input type="text" name="name" value="<?= htmlspecialchars($userData['name']) ?>" >
+           Name:<input type="text" name="name" value="<?= htmlspecialchars($userData['name']) ?>" required>
 
-            Email:<input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" >
+            Email:<input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" required>
 
-            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone']) ?>" >
+            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone']) ?>" required>
 
-             Gender:<select name="gender" required>
+             Gender:<select name="gender" >
              <option value="">Select Gender</option>
                 <option value="male" <?= $userData['gender'] === 'male' ? 'selected' : '' ?>>Male</option>
                 <option value="female" <?= $userData['gender'] === 'female' ? 'selected' : '' ?>>Female</option>
@@ -129,7 +129,7 @@ button:hover {
 
              Address:<textarea name="address"><?= htmlspecialchars($userData['address']) ?></textarea>
 
-            Role:<select name="role" required>
+            Role:<select name="role">
                 <option value="">Select Role</option>
                 <option value="team" <?= $userData['role'] === 'team' ? 'selected' : '' ?>>Team</option>
                 <option value="employee" <?= $userData['role'] === 'employee' ? 'selected' : '' ?>>Employee</option>

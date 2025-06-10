@@ -21,8 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     $assigned_to = $_POST['assigned_to'];
+    $due_date = $_POST['due_date'];
+    $priority = $_POST['priority'];
+    $status = $_POST['status'];
 
-    $updated = $taskModel->update($id, $title, $description, $assigned_to);
+    $updated = $taskModel->update($id, $title, $description, $assigned_to, $due_date, $priority, $status);
 
     if ($updated) {
         echo "<script>
@@ -98,16 +101,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
     <?php if ($taskData): ?>
         <form method="POST">
-            <input type="text" name="title" value="<?= htmlspecialchars($taskData['title']) ?>" required>
-            <textarea name="description" rows="4" required><?= htmlspecialchars($taskData['description']) ?></textarea>
-            <select name="assigned_to" required>
+            
+         <label for="title">Task Title:</label>
+        <input type="text" name="title" value="<?= htmlspecialchars($taskData['title']) ?>" id="title">
+
+         <label for="description">Task Description:</label>
+        <textarea name="description" id="description" rows="3" ><?= htmlspecialchars($taskData['description']) ?></textarea>
+
+        <label for="assigned_to">Assign To:</label>
+                <select name="assigned_to" id="assigned_to">
+                <option value="">-- Select User --</option>
                 <?php foreach ($users as $user): ?>
-                    <option value="<?= $user['id'] ?>" <?= $user['id'] == $taskData['assigned_to'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($user['name']) ?>
-                    </option>
+                    <?php if ($user['is_admin'] != 1): ?>
+                        <option value="<?= htmlspecialchars($user['id']) ?>" <?= $user['id'] == ($taskData['assigned_to'] ?? '') ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($user['name']) ?>
+                        </option>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </select>
-            <button type="submit">Update Task</button>
+
+        <label for="due_date">Due Date:</label>
+        <input type="date" name="due_date" value="<?= htmlspecialchars($taskData['due_date']) ?>" id="due_date">
+
+
+        <label for="priority">Priority:</label>
+        <select name="priority" id="priority" required>
+            <option value="">-- Select Priority --</option>
+            <option value="Low" <?= ($taskData['priority'] ?? '') === 'Low' ? 'selected' : '' ?>>Low</option>
+            <option value="Medium" <?= ($taskData['priority'] ?? '') === 'Medium' ? 'selected' : '' ?>>Medium</option>
+            <option value="High" <?= ($taskData['priority'] ?? '') === 'High' ? 'selected' : '' ?>>High</option>
+        </select>
+
+
+          <label for="status">Status:</label>
+        <select name="status" id="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="Pending" <?= ($taskData['status'] ?? '') === 'Pending' ? 'selected' : '' ?>>Pending</option>
+            <option value="In Progress" <?= ($taskData['status'] ?? '') === 'In progress' ? 'selected' : '' ?>>In Progress</option>
+            <option value="Completed" <?= ($taskData['status'] ?? '') === 'Completed' ? 'selected' : '' ?>>Completed</option>
+        </select>
+        <button type="submit">Update Task</button>
         </form>
     <?php else: ?>
         <p>Task not found.</p>

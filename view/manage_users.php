@@ -1,4 +1,6 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
 
 require_once "../model/User.php";
@@ -81,6 +83,7 @@ a:hover {
 <body>
 
 <div class="table-container">
+    <a href="admin-dash.php?page=tfilter_view" style="margin-left:85%;">Search By Filter</a>
     <h2>Manage Users</h2>
     <table>
         <tr>
@@ -94,21 +97,21 @@ a:hover {
             <td><?= htmlspecialchars($user['phone']) ?></td>
             <td><?= htmlspecialchars($user['gender']) ?></td>
             <td><?= htmlspecialchars($user['role']) ?></td>
-              <td>
+            <td>
                 <?php
-                $role = strtolower($user['role']);
-                if ($role === 'admin' || $role === 'employee'|| $role === 'team') {
-                    echo '<span class="badge bg-success">Active</span>';
-                } else {
-                    echo '<span class="badge bg-danger">Inactive</span>';
+                $role = strtolower($user['role']);{
+                    if($role === 'admin' || $role === 'employee' || $role === 'team'){
+                        echo '<span class="badge bg-success">Active</span>';
+                    }else{
+                        echo '<span class="badge bg-danger">Inactive</span>';
+                    }
                 }
                 ?>
             </td>
             <td class="action-buttons">
             <a href="admin-dash.php?page=edit_user&id=<?= $user['id'] ?>">Edit</a>
-             <a href="admin-dash.php?page=detail_view&id=<?= $user['id'] ?>">view</a>
+            <a href="admin-dash.php?page=detail_view&id=<?= $user['id'] ?>">View</a>
             <a href="" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
-
 
             </td>
         </tr>

@@ -50,6 +50,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
         }
         elseif ($page === 'add_task') {
             include 'add_task.php';
+        }elseif ($page === 'filter_view') {
+            include 'filter_view.php';
         }
         elseif ($page === 'manage_task') {
             include 'manage_task.php';

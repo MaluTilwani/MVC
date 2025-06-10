@@ -2,12 +2,10 @@
 session_start();
 
 require_once "../model/User.php";
-  
 $userModel = new User();
 
 $totalEmployees = $userModel->countUsersByRole('employee');
 $totalTeamLeaders = $userModel->countUsersByRole('team');
-$totalAdmins = $userModel->countUsersByRole('admin');
 
 $adminName = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : 'Admin';
 
@@ -27,7 +25,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
       <h2>Welcome Admin,<br><span><h2><?php echo htmlspecialchars($adminName); ?></span></h2>
     </div>
     <ul class="menu">
-      <li class="active"><a href="admin-dash.php?page=manage_user"><i class="fas fa-tachometer-alt"> Admin Dashboard</i></a></li>
+      <li class="active"><a href="admin-dash.php?page=manage_user"><i class="fas fa-tachometer-alt"> Admin  Dashboard</i></a></li>
        <li><a href="admin-dash.php?page=add_user"><i class="fas fa-user-plus"> Add User</i></a></li>
       <li><a href="admin-dash.php?page=add_task"><i class="fas fa-tasks"> Add Task</i></a></li>
       <li><a href="admin-dash.php?page=manage_user"><i class="fas fa-users-cog"> Manage Users</i></a></li>
@@ -65,6 +63,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
             include 'update_profile.php';
         }elseif ($page === 'filter_view') {
             include 'filter_view.php';
+        }elseif ($page === 'tfilter_view') {
+            include 'tfilter_view.php';
         }elseif ($page === 'detail_view') {
             include 'detail_view.php';
         }elseif ($page === 'task_edit' && isset($_GET['id'])) {

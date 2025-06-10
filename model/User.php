@@ -28,6 +28,13 @@ class User extends Database {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getUserById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function login($email, $password) {
     $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -93,12 +100,6 @@ public function updateUser($id, $name, $email, $phone, $gender, $address, $role)
         return ['status' => false, 'message' => 'Failed to update user.'];
     }
 }
-public function getUserById($id) {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
-    }
 public function deleteUser($id) {
     $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
     $stmt->bind_param("i", $id);
