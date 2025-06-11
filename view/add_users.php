@@ -157,17 +157,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="password" name="password" id="password" placeholder="Enter password" required>
 
         <label for="phone">Phone Number:</label>
-        <input type="text" name="phone" id="phone" placeholder="Enter phone number" required>
+        <input type="text" name="phone" id="phone" placeholder="Enter phone number">
 
         <label for="role">Role:</label>
-        <select name="role" id="role" required>
+        <select name="role" id="role">
             <option value="">--Select Role--</option>
             <option value="employee">Employee</option>
             <option value="team">Team</option>
         </select>
 
         <label for="gender">Gender:</label>
-        <select name="gender" id="gender" required>
+        <select name="gender" id="gender">
             <option value="">--Select Gender--</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -175,10 +175,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
 
         <label for="address">Address:</label>
-        <textarea name="address" id="address" placeholder="Enter address" required></textarea>
+        <textarea name="address" id="address" placeholder="Enter address" ></textarea>
 
         <label for="profile_picture">Profile Picture:</label>
-        <input type="file" name="profile_picture" accept="image/*" required>
+        <input type="file" name="profile_picture" accept="image/*" >
 
         <input type="submit" value="Add User">
     </form>

@@ -4,12 +4,13 @@ require_once '../config/config.php';
 $db = new Database();
 $conn = $db->connect();
 
-$sql = "SELECT t.id, t.title, t.description,t.due_date ,t.priority ,t.status,  u.name AS assigned_user
+$sql = "SELECT t.id, t.title, t.description, t.due_date, t.priority, t.status, u.name AS assigned_user
         FROM tasks t
         LEFT JOIN users u ON t.assigned_to = u.id
         ORDER BY t.id ASC";
 
 $result = $conn->query($sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -142,7 +143,7 @@ $result = $conn->query($sql);
 </td>
                     <td class="action-buttons">
                         <a href="admin-dash.php?page=task_edit&id=<?= $row['id'] ?>">Edit</a>
-                        <a href="" onclick="return confirm('Delete this task?')">Delete</a>
+                        <a href="delete_task.php?id=<?= $row['id'] ?>" onclick="return confirm('Are you sure you want to delete this task?')">Delete</a>
                     </td>
                 </tr>
             <?php endwhile; ?>

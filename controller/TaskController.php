@@ -12,21 +12,20 @@ class TaskController {
     private $taskModel;
 
      public function __construct() {
-        $this->userModel = new User();
+        $this->taskModel = new Task();
      }
 
-// public function edit($id) {
-//     $task = $this->taskModel->getById($id);
-//     $users = $this->userModel->getAllExceptAdmins();
-//     include 'views/tasks/edit.php';
-// }
+
 
 public function update($id) {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $assigned_to = $_POST['assigned_to'];
+    $due_date = $_POST['due_date'];
+    $priority = $_POST['priority'];
+    $status = $_POST['status'];
 
-    $this->taskModel->update($id, $title, $description, $assigned_to);
+    $this->taskModel->update($id, $title, $description, $assigned_to, $due_date, $priority, $status);
     header("Location: /tasks"); // Redirect to task list
 }
 

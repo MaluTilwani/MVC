@@ -116,11 +116,10 @@ public function login() {
     }
 }
   public function logout() {
-    session_start();
-    $_SESSION = [];              
+    session_start();           
     session_unset();             
     session_destroy();         
-    header("Location: /task1/view/login.php");
+    header("Location: ../view/login.php");
     exit();
 }
 

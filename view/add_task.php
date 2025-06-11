@@ -124,8 +124,8 @@ $users = $userModel->getAllUsers();
             <?php endforeach; ?>
         </select>
 
-        <label for="due_date">Due Date:</label>
-        <input type="date" name="due_date" id="due_date" required>
+       <label for="due_date">Due Date:</label>
+       <input type="date" name="due_date" id="due_date" min="<?= date('Y-m-d') ?>" required>
 
         <label for="priority">Priority:</label>
         <select name="priority" id="priority" required>

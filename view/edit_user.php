@@ -118,7 +118,7 @@ button:hover {
 
             Email:<input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" required>
 
-            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone']) ?>" required>
+            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone']) ?>" >
 
              Gender:<select name="gender" >
              <option value="">Select Gender</option>

@@ -34,26 +34,19 @@ class Task extends Database {
         return $stmt->execute();
     }
 
-   public function delete($id) {
-    if (!$this->conn) {
-        die("Database connection not established.");
-    }
 
+
+public function delete($id) {
     $stmt = $this->conn->prepare("DELETE FROM tasks WHERE id = ?");
     if (!$stmt) {
         die("Prepare failed: " . $this->conn->error);
     }
-
     $stmt->bind_param("i", $id);
-
     if (!$stmt->execute()) {
         die("Execute failed: " . $stmt->error);
     }
-
-    $stmt->close();
-    return true;
+    return $stmt->affected_rows > 0;
 }
 
 }
 ?>
-s

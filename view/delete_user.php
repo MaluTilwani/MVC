@@ -2,11 +2,6 @@
 session_start();
 require_once "../model/User.php";
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header('Location: login.php');
-    exit;
-}
-
 $userModel = new User();
 $id = $_GET['id'] ?? null;
 
@@ -20,7 +15,7 @@ if ($id && is_numeric($id)) {
         exit;
     } else {
         echo "<script>
-                alert('Failed to delete user.');
+                alert('Failed to delete user.');    
                 window.location.href = 'admin-dash.php?page=manage_users';
               </script>";
         exit;
@@ -31,4 +26,5 @@ if ($id && is_numeric($id)) {
             window.location.href = 'admin-dash.php?page=manage_users';
           </script>";
     exit;
+    
 }
