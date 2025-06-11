@@ -118,7 +118,7 @@ button:hover {
 
             Email:<input type="email" name="email" value="<?= htmlspecialchars($userData['email']) ?>" required>
 
-            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone']) ?>" >
+            Phone:<input type="text" name="phone" value="<?= htmlspecialchars($userData['phone'] ?? '') ?>" >
 
              Gender:<select name="gender" >
              <option value="">Select Gender</option>
@@ -127,7 +127,7 @@ button:hover {
                 <option value="other" <?= $userData['gender'] === 'other' ? 'selected' : '' ?>>Other</option>
             </select><br/>
 
-             Address:<textarea name="address"><?= htmlspecialchars($userData['address']) ?></textarea>
+             Address:<textarea name="address"><?= htmlspecialchars($userData['address'] ?? '') ?></textarea>
 
             Role:<select name="role">
                 <option value="">Select Role</option>

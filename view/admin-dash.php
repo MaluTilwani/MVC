@@ -28,8 +28,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
       <li class="active"><a href="admin-dash.php?page=manage_user"><i class="fas fa-tachometer-alt"> Admin  Dashboard</i></a></li>
        <li><a href="admin-dash.php?page=add_user"><i class="fas fa-user-plus"> Add User</i></a></li>
       <li><a href="admin-dash.php?page=add_task"><i class="fas fa-tasks"> Add Task</i></a></li>
-      <li><a href="admin-dash.php?page=manage_user"><i class="fas fa-users-cog"> Manage Users</i></a></li>
-      <li><a href="admin-dash.php?page=manage_task"><i class="fas fa-tasks"> Manage Tasks</i></a></li>
+      <li><a href="admin-dash.php?page=manage_user1"><i class="fas fa-users-cog"> Manage Users</i></a></li>
+      <li><a href="admin-dash.php?page=manage_task1"><i class="fas fa-tasks"> Manage Tasks</i></a></li>
     </ul>
   </div>
 
@@ -47,14 +47,14 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
         if ($page === 'add_user') {
             include 'add_users.php'; 
         }
-        elseif ($page === 'manage_user') {
-            include 'manage_users.php';
+        elseif ($page === 'manage_user1') {
+            include 'manage_user1.php';
         }
         elseif ($page === 'add_task') {
             include 'add_task.php';
         }
-        elseif ($page === 'manage_task') {
-            include 'manage_task.php';
+        elseif ($page === 'manage_task1') {
+            include 'manage_task1.php';
         }elseif ($page === 'delete_user') {
             include 'delete_user.php';
         }elseif ($page === 'edit_user' && isset($_GET['id'])) {

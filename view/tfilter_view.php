@@ -162,15 +162,16 @@ $result = $stmt->get_result();
                         <td><?= htmlspecialchars($user['id']) ?></td>
                         <td><?= htmlspecialchars($user['name']) ?></td>
                         <td><?= htmlspecialchars($user['email']) ?></td>
-                        <td><?= htmlspecialchars($user['phone']) ?></td>
+                        <td><?= htmlspecialchars($user['phone'] ?? '') ?></td>
                         <td><?= htmlspecialchars($user['gender']) ?></td>
-                        <td><?= htmlspecialchars($user['role']) ?></td>
+                        <td><?= htmlspecialchars($user['role'] ?? '') ?></td>
                         <td>
                             <?php
-                            $role = strtolower($user['role']);
+                            $role = strtolower($user['role'] ?? '');
                             echo in_array($role, ['admin', 'employee', 'team']) 
                                 ? '<span class="badge bg-success">Active</span>' 
                                 : '<span class="badge bg-danger">Inactive</span>';
+                              
                             ?>
                         </td>
                         <td class="action-buttons">
@@ -185,7 +186,6 @@ $result = $stmt->get_result();
         </tbody>
     </table>
 </div>
-
 </body>
 </html>
 

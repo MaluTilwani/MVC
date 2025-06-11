@@ -116,7 +116,7 @@ $result = $conn->query($sql);
                     <td><?= htmlspecialchars($row['description']) ?></td>
                     <td><?= htmlspecialchars($row['assigned_user'] ?? 'Unassigned') ?></td>
                     <td><?= htmlspecialchars($row['due_date'] ?? '') ?></td>
-                    <td><?= htmlspecialchars($row['priority'] ?? '') ?></td>s
+                    <td><?= htmlspecialchars($row['priority'] ?? '') ?></td>
                     <td><?= htmlspecialchars($row['status']) ?></td>
                     <td>
     <?php

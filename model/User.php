@@ -14,7 +14,7 @@ class User extends Database {
     $stmt->bind_param("sss", $name, $email, $password);
     return $stmt->execute();
 }
-    
+
     public function getAllUsers() {
         $stmt = $this->conn->prepare("SELECT * FROM users ORDER BY id ASC");
         $stmt->execute();
@@ -57,6 +57,22 @@ public function getAll() {
     $stmt = $this->conn->prepare("SELECT * FROM users");
     $stmt->execute();
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+public function getFilteredUsers($filter, $keyword) {
+    $allowedFilters = ['name', 'email', 'role'];
+    if (!in_array($filter, $allowedFilters) || empty($keyword)) {
+        return $this->getAllUsers(); // fallback to all
+    }
+
+    $sql = "SELECT * FROM users WHERE $filter LIKE ?";
+    $stmt = $this->conn->prepare($sql);
+    $search = '%' . $keyword . '%';
+    $stmt->bind_param('s', $search);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 

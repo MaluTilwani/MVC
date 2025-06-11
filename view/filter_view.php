@@ -179,6 +179,7 @@ $result = $stmt->get_result();
                         <td><?= htmlspecialchars($row['due_date']) ?></td>
                         <td><?= htmlspecialchars($row['priority']) ?></td>
                         <td><?= htmlspecialchars($row['status']) ?></td>
+                       
                           <td>
     <?php
     $status = strtolower($row['status']);
